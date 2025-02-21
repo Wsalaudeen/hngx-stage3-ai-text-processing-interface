@@ -11,7 +11,6 @@ export default function Chatbox() {
   const textBoxRef = useRef();
 
   const supportedLanguages = {
-    "": "",
     en: "English",
     pt: "Portuguese",
     es: "Spanish",
