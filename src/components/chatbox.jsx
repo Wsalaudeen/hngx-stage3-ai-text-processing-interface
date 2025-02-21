@@ -210,7 +210,11 @@ export default function Chatbox() {
   };
   return (
     <section className="flex flex-col w-3/4 max-md:w-full items-center py-10 px-6 min-h-full">
-      <header className="flex w-full   items-center justify-between gap-4 border-b-2">
+      <header
+        className="flex w-full   items-center justify-between gap-4 border-b-2"
+        role="region"
+        aria-labelledby="chat-heading"
+      >
         <div className="flex items-center gap-4">
           <svg
             className="w-16 h-16"
@@ -219,6 +223,7 @@ export default function Chatbox() {
             width="1.2rem"
             height="1.2rem"
             viewBox="0 0 24 24"
+            aria-labelledby="logo-tittle"
           >
             <path
               fill="#725DE5"
@@ -248,6 +253,9 @@ export default function Chatbox() {
                   ? "chat user h-max w-full flex justify-end relative"
                   : "chat chat-bot h-max flex relative"
               }
+              aria-label={`Message from ${
+                message.sender === "user" ? "you" : "LanguoAi"
+              }`}
             >
               <div className="flex relative">
                 <div className="flex flex-col gap-2">
@@ -256,6 +264,7 @@ export default function Chatbox() {
                     className={`user-msg text-white w-max ml-6 lg:ml-[35%] text-base rounded-tr-[3rem] rounded-l-[3rem] p-4 ${
                       message.summary ? "bg-[#1e1e1e]" : "bg-[#725de5]"
                     }`}
+                    aria-live="polite"
                   >
                     {message.summary || message.text}
                   </p>
@@ -285,6 +294,7 @@ export default function Chatbox() {
                       <button
                         onClick={() => handleSummarize(message.id)}
                         className="text-[#f2f2f2] bg-[#725DE5] text-sm  cursor-pointer px-3 py-1 rounded-md "
+                        aria-label="Summarize message"
                       >
                         {isSummarizing ? "Summarize" : "Summarizing"}
                       </button>
@@ -296,6 +306,7 @@ export default function Chatbox() {
                         value={targetLanguage}
                         onChange={(e) => setTargetLanguage(e.target.value)}
                         className="text-sm border rounded-md p-1 bg-white"
+                        aria-label="Select target language"
                       >
                         {Object.entries(supportedLanguages).map(
                           ([code, name]) => (
@@ -309,6 +320,7 @@ export default function Chatbox() {
                         onClick={() => handleTranslate(message.id)}
                         className="text-[#f2f2f2] bg-[#725de5] text-sm cursor-pointer px-3 py-1 rounded-md"
                         disabled={message.isTranslating || !targetLanguage}
+                        aria-label="Translate message"
                       >
                         {message.isTranslating
                           ? "Translating...."
@@ -370,7 +382,7 @@ export default function Chatbox() {
           />
           <button
             type="submit"
-            aria-label="submit"
+            aria-label="send message co"
             disabled={!input.trim()}
             className="focus:outline-white focus:border-white  border outline  rounded-full w-8 h-8 p-2 flex items-center"
           >
@@ -380,6 +392,7 @@ export default function Chatbox() {
               width="1.18rem"
               height="1.2rem"
               viewBox="0 0 1792 1824"
+              aria-hidden="true"
             >
               <path
                 fill="white"
