@@ -4,10 +4,13 @@
 
 @import url(https://db.onlinewebfonts.com/c/1a5c2d8bbd4e28d99a6efcbb9a5b378f?family=JejuMyeongjo);
 
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
 @import "tailwindcss";
 
 @theme {
   --font-Alatsi: "Alatsi", serif;
   --font-Rage: "Road Rage", serif;
   --font-JejuMyeongjo: "JejuMyeongjo";
+  --font-Roboto: "Roboto", serif;
 }
