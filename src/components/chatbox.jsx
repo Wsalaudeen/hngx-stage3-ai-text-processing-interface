@@ -216,7 +216,7 @@ export default function Chatbox() {
         aria-labelledby="chat-heading"
       >
         <div className="flex items-center gap-4">
-          <Link to="/">
+          <Link to="/" className="cursor-pointer">
             <svg
               className="w-16 h-16"
               role="image"
