@@ -209,20 +209,18 @@ export default function Chatbox() {
     setError("");
   };
   return (
-    <section className="flex flex-col w-3/4 max-md:w-full items-center py-10 px-6 min-h-full">
+    <section className="flex flex-col w-full max-w-4xl mx-auto min-h-screen px-4 sm:px-6 py-6">
       <header
-        className="flex w-full   items-center justify-between gap-4 border-b-2"
+        className="flex w-full items-center justify-between gap-4 border-b-2 pb-4"
         role="region"
         aria-labelledby="chat-heading"
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <Link to="/" className="cursor-pointer">
             <svg
-              className="w-16 h-16"
+              className="w-10 h-10 sm:w-16 sm:h-16"
               role="image"
               xmlns="http://www.w3.org/2000/svg"
-              width="1.2rem"
-              height="1.2rem"
               viewBox="0 0 24 24"
               aria-labelledby="logo-tittle"
             >
@@ -232,7 +230,7 @@ export default function Chatbox() {
               />
             </svg>
           </Link>
-          <h1 className="text-2xl font-bold font-JejuMyeongjo pr-0.5">
+          <h1 className="text-xl sm:text-2xl font-bold font-JejuMyeongjo">
             LanguoAi
           </h1>
         </div>
@@ -240,170 +238,168 @@ export default function Chatbox() {
           type="button"
           aria-label="delete all chats"
           onClick={handleClearMessages}
-          className="w-10 h-10 p-2 rounded-full cursor-pointer bg-[#725DE5] border-2 border-solid border-[#f2f2f2] outline-2 outline-offset-0 hover:outline-red-500 focus:outline-red-500 focus:border-[#f2f2f2]  transition-all"
+          className="w-8 h-8 sm:w-10 sm:h-10 p-1.5 sm:p-2 rounded-full cursor-pointer bg-[#725DE5] border-2 border-solid border-[#f2f2f2] outline-2 outline-offset-0 hover:outline-red-500 focus:outline-red-500 focus:border-[#f2f2f2] transition-all"
         >
           <RiDeleteBin2Fill className="w-full h-full text-white" />
         </button>
       </header>
-      <main className="w-full min-h-[95%] justify-between pt-10 flex flex-col gap-4">
+
+      <main className="flex-1 w-full pt-6 sm:pt-10 flex flex-col gap-4 overflow-y-auto">
         {messages.map((message) => {
+          const isLongMessage =
+            message.text?.length > 150 || message.summary?.length > 150;
+
           return (
             <div
               key={message.id}
-              className={
-                message.sender === "user"
-                  ? "chat user h-max w-full flex justify-end relative"
-                  : "chat chat-bot h-max flex relative"
-              }
+              className={`
+            chat relative mb-8
+            ${
+              message.sender === "user"
+                ? "flex flex-col items-end"
+                : "flex flex-col items-start"
+            }
+          `}
               aria-label={`Message from ${
                 message.sender === "user" ? "you" : "LanguoAi"
               }`}
             >
-              <div className="flex relative">
-                <div className="flex flex-col gap-2">
-                  <p
-                    key={message.id}
-                    className={`user-msg text-white w-max ml-6 lg:ml-[35%] text-base rounded-tr-[3rem] rounded-l-[3rem] p-4 ${
-                      message.summary ? "bg-[#1e1e1e]" : "bg-[#725de5]"
-                    }`}
-                    aria-live="polite"
-                  >
-                    {message.summary || message.text}
-                  </p>
-                  <p className=" chat-bot-msg bg-[#45415a] text-white ml-4 w-max mr-6 lg:mr-[35%] text-base rounded-tl-[3rem] rounded-r-[3rem] p-4">
+              <div
+                className={`
+            flex flex-col gap-2 max-w-[90%] sm:max-w-[75%]
+            ${isLongMessage ? "w-full" : "w-auto"}
+          `}
+              >
+                <p
+                  className={`
+                text-white text-base p-4 break-words
+                ${message.summary ? "bg-[#1e1e1e]" : "bg-[#725de5]"}
+                ${
+                  message.sender === "user"
+                    ? "rounded-tr-[3rem] rounded-l-[3rem]"
+                    : "rounded-tl-[3rem] rounded-r-[3rem]"
+                }
+              `}
+                  aria-live="polite"
+                >
+                  {message.summary || message.text}
+                </p>
+
+                {message.translation && (
+                  <p className="bg-[#45415a] text-white text-base p-4 break-words rounded-tl-[3rem] rounded-r-[3rem]">
                     {message.translation}
                   </p>
+                )}
 
-                  {/* Language detection */}
-                  <p
-                    className={`text-sm ${
-                      message.sender === "user" ? "text-right" : "text-left"
-                    } text-[#725de5] ml-4`}
-                  >
-                    {getLanguageString(message.detectedLanguage)}
-                  </p>
+                <p
+                  className={`text-sm text-[#725de5] ${
+                    message.sender === "user" ? "text-right" : "text-left"
+                  }`}
+                >
+                  {getLanguageString(message.detectedLanguage)}
+                </p>
 
-                  {/* Action buttons container */}
-                  <div
-                    className={`flex gap-2 ${
-                      message.sender === "user"
-                        ? "justify-end"
-                        : "justify-start"
-                    } ml-4`}
-                  >
-                    {/* Summarize button - only for English messages > 150 chars */}
-                    {shouldShowSummarize(message) && (
-                      <button
-                        onClick={() => handleSummarize(message.id)}
-                        className="text-[#f2f2f2] bg-[#725DE5] text-sm  cursor-pointer px-3 py-1 rounded-md "
-                        aria-label="Summarize message"
-                      >
-                        {isSummarizing ? "Summarize" : "Summarizing"}
-                      </button>
-                    )}
+                <div
+                  className={`flex flex-wrap gap-2 ${
+                    message.sender === "user" ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  {shouldShowSummarize(message) && (
+                    <button
+                      onClick={() => handleSummarize(message.id)}
+                      className="text-[#f2f2f2] bg-[#725DE5] text-sm cursor-pointer px-3 py-1 rounded-md"
+                      aria-label="Summarize message"
+                    >
+                      {isSummarizing ? "Summarizing..." : "Summarize"}
+                    </button>
+                  )}
 
-                    {/* Translation options */}
-                    <div className="flex items-center gap-2">
-                      <select
-                        value={targetLanguage}
-                        onChange={(e) => setTargetLanguage(e.target.value)}
-                        className="text-sm border rounded-md p-1 bg-white"
-                        aria-label="Select target language"
-                      >
-                        {Object.entries(supportedLanguages).map(
-                          ([code, name]) => (
-                            <option key={code} value={code}>
-                              {name}
-                            </option>
-                          )
-                        )}
-                      </select>
-                      <button
-                        onClick={() => handleTranslate(message.id)}
-                        className="text-[#f2f2f2] bg-[#725de5] text-sm cursor-pointer px-3 py-1 rounded-md"
-                        disabled={message.isTranslating || !targetLanguage}
-                        aria-label="Translate message"
-                      >
-                        {message.isTranslating
-                          ? "Translating...."
-                          : "Translate"}
-                      </button>
-                    </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <select
+                      value={targetLanguage}
+                      onChange={(e) => setTargetLanguage(e.target.value)}
+                      className="text-sm border rounded-md p-1 bg-white"
+                      aria-label="Select target language"
+                    >
+                      {Object.entries(supportedLanguages).map(
+                        ([code, name]) => (
+                          <option key={code} value={code}>
+                            {name}
+                          </option>
+                        )
+                      )}
+                    </select>
+                    <button
+                      onClick={() => handleTranslate(message.id)}
+                      className="text-[#f2f2f2] bg-[#725de5] text-sm cursor-pointer px-3 py-1 rounded-md"
+                      disabled={message.isTranslating || !targetLanguage}
+                      aria-label="Translate message"
+                    >
+                      {message.isTranslating ? "Translating..." : "Translate"}
+                    </button>
                   </div>
                 </div>
               </div>
-              <span
-                className={
-                  message.sender === "bot"
-                    ? "absolute ml-4 text-bot text-sm italic -bottom-5"
-                    : "absolute ml-4 text-human text-sm italic right-0 -bottom-5"
-                }
-              >
-                {message.messageTime}
-              </span>
+
+              <span className="text-sm italic mt-1">{message.messageTime}</span>
             </div>
           );
         })}
 
         {typing && (
-          <div className="chat chat-bot flex relative h-max">
-            <img
-              src="../bot.svg"
-              alt="bot"
-              className="block w-4 h-4 absolute bottom-0"
-            />
-            <p className="chat-bot-msg bg-[#45415a] text-[#f2f2f2] ml-4 w-max mr-6 lg:mr-[35%] text-sm rounded-tl-[3rem] rounded-r-[3rem] p-4 italic">
+          <div className="chat flex items-start gap-2 relative h-max">
+            <img src="../bot.svg" alt="bot" className="w-4 h-4" />
+            <p className="bg-[#45415a] text-[#f2f2f2] text-sm rounded-tl-[3rem] rounded-r-[3rem] p-4 italic">
               Typing...
             </p>
           </div>
         )}
 
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-
-        {/* form */}
-        <form
-          onSubmit={handleSendMessage}
-          className="w-full h-16 rounded-[3rem] bg-[#725DE5] flex gap-4 items-center px-4 py-2 z-10"
-        >
-          <textarea
-            aria-label="message text box"
-            id="message-text-box"
-            name="message-text-box"
-            ref={textBoxRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleSendMessage(e);
-              }
-            }}
-            rows="1"
-            placeholder="Ask me anything..."
-            className="w-full flex leading-5 bg-transparent text-white border-none outline-none text-base placeholder:text-gray-300 focus:outline-white focus:border-white rounded-chat-box p-2 resize-none"
-          />
-          <button
-            type="submit"
-            aria-label="send message co"
-            disabled={!input.trim()}
-            className="focus:outline-white focus:border-white  border outline  rounded-full w-8 h-8 p-2 flex items-center"
-          >
-            <svg
-              className="cursor-pointer"
-              xmlns="http://www.w3.org/2000/svg"
-              width="1.18rem"
-              height="1.2rem"
-              viewBox="0 0 1792 1824"
-              aria-hidden="true"
-            >
-              <path
-                fill="white"
-                d="M1764 43q33 24 27 64l-256 1536q-5 29-32 45q-14 8-31 8q-11 0-24-5l-527-215l-298 327q-18 21-47 21q-14 0-23-4q-19-7-30-23.5t-11-36.5v-452L40 1115q-37-14-40-55q-3-39 32-59L1696 41q35-21 68 2m-342 1499l221-1323l-1434 827l336 137l863-639l-478 797z"
-              />
-            </svg>
-          </button>
-        </form>
       </main>
+
+      <form
+        onSubmit={handleSendMessage}
+        className="sticky bottom-0 w-full mt-4 rounded-[3rem] bg-[#725DE5] flex gap-4 items-center px-4 py-2"
+      >
+        <textarea
+          aria-label="message text box"
+          id="message-text-box"
+          name="message-text-box"
+          ref={textBoxRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSendMessage(e);
+            }
+          }}
+          rows="1"
+          placeholder="Ask me anything..."
+          className="w-full flex leading-5 bg-transparent text-white border-none outline-none text-base placeholder:text-gray-300 focus:outline-white focus:border-white rounded-chat-box p-2 resize-none"
+        />
+        <button
+          type="submit"
+          aria-label="send message"
+          disabled={!input.trim()}
+          className="focus:outline-white focus:border-white border outline rounded-full w-8 h-8 p-2 flex items-center flex-shrink-0"
+        >
+          <svg
+            className="cursor-pointer"
+            xmlns="http://www.w3.org/2000/svg"
+            width="1.18rem"
+            height="1.2rem"
+            viewBox="0 0 1792 1824"
+            aria-hidden="true"
+          >
+            <path
+              fill="white"
+              d="M1764 43q33 24 27 64l-256 1536q-5 29-32 45q-14 8-31 8q-11 0-24-5l-527-215l-298 327q-18 21-47 21q-14 0-23-4q-19-7-30-23.5t-11-36.5v-452L40 1115q-37-14-40-55q-3-39 32-59L1696 41q35-21 68 2m-342 1499l221-1323l-1434 827l336 137l863-639l-478 797z"
+            />
+          </svg>
+        </button>
+      </form>
     </section>
   );
 }
